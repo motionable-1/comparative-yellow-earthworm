@@ -10,6 +10,7 @@ import { CTAScene } from "./scenes/CTAScene";
 import { flashWhite } from "../library/components/layout/transitions/presentations/flashWhite";
 import { whipPan } from "../library/components/layout/transitions/presentations/whipPan";
 import { glitch } from "../library/components/layout/transitions/presentations/glitch";
+import { SoundDesign } from "./SoundDesign";
 
 // 15 second ad @ 30fps = 450 frames
 // Scene 1 (Hook): 0-3s = 90 frames
@@ -39,6 +40,9 @@ export const Main: React.FC = () => {
         <Artifact content={Artifact.Thumbnail} filename="thumbnail.jpeg" />
       )}
       <AbsoluteFill style={{ backgroundColor: "#0a0a0a" }}>
+        {/* Sound Design Layer */}
+        <SoundDesign />
+
         <TransitionSeries>
           {/* Scene 1: Hook - "Your Ads Are Boring" */}
           <TransitionSeries.Sequence durationInFrames={90}>
