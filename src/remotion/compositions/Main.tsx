@@ -1,68 +1,83 @@
+import React from "react";
 import { AbsoluteFill, Artifact, useCurrentFrame } from "remotion";
-import { TextAnimation } from "../library/components/text/TextAnimation";
-import { loadFont } from "@remotion/google-fonts/Inter";
+import { TransitionSeries, linearTiming } from "@remotion/transitions";
+import { loadFont as loadSpaceGrotesk } from "@remotion/google-fonts/SpaceGrotesk";
+import { loadFont as loadInter } from "@remotion/google-fonts/Inter";
+import { HookScene } from "./scenes/HookScene";
+import { SolutionScene } from "./scenes/SolutionScene";
+import { ResultsScene } from "./scenes/ResultsScene";
+import { CTAScene } from "./scenes/CTAScene";
+import { flashWhite } from "../library/components/layout/transitions/presentations/flashWhite";
+import { whipPan } from "../library/components/layout/transitions/presentations/whipPan";
+import { glitch } from "../library/components/layout/transitions/presentations/glitch";
 
-// This re-runs on every HMR update of this file
-const hmrKey = Date.now();
+// 15 second ad @ 30fps = 450 frames
+// Scene 1 (Hook): 0-3s = 90 frames
+// Transition: 8 frames
+// Scene 2 (Solution): 3-7s = 120 frames
+// Transition: 10 frames
+// Scene 3 (Results): 7-11s = 120 frames
+// Transition: 8 frames
+// Scene 4 (CTA): 11-16s = 150 frames (extra hold at end)
+// Total: 90 + 120 + 120 + 150 - 8 - 10 - 8 = 454 frames
 
 export const Main: React.FC = () => {
-  const { fontFamily } = loadFont();
+  const { fontFamily: headingFont } = loadSpaceGrotesk("normal", {
+    weights: ["500", "600", "700"],
+    subsets: ["latin"],
+  });
+  const { fontFamily: bodyFont } = loadInter("normal", {
+    weights: ["400", "500", "600"],
+    subsets: ["latin"],
+  });
+
   const frame = useCurrentFrame();
+
   return (
     <>
-      {/* Leave this here to generate a thumbnail */}
       {frame === 0 && (
         <Artifact content={Artifact.Thumbnail} filename="thumbnail.jpeg" />
       )}
-      <AbsoluteFill className="flex items-center justify-center bg-white">
-        <TextAnimation
-          key={hmrKey}
-          className="text-5xl font-bold text-center"
-          style={{ fontFamily }}
-          createTimeline={({ textRef, tl, SplitText }) => {
-            // Split the text into individual characters using the ref
-            const splitText = new SplitText(textRef.current, {
-              type: "chars",
-              charsClass: "char",
-            });
+      <AbsoluteFill style={{ backgroundColor: "#0a0a0a" }}>
+        <TransitionSeries>
+          {/* Scene 1: Hook - "Your Ads Are Boring" */}
+          <TransitionSeries.Sequence durationInFrames={90}>
+            <HookScene headingFont={headingFont} bodyFont={bodyFont} />
+          </TransitionSeries.Sequence>
 
-            // Use fromTo to ensure initial state is part of the timeline
-            tl.fromTo(
-              splitText.chars,
-              {
-                opacity: 0,
-                y: 50,
-                rotationX: 90,
-              },
-              {
-                opacity: 1,
-                y: 0,
-                rotationX: 0,
-                duration: 0.8,
-                stagger: 0.05,
-                ease: "back.out(1.7)",
-              },
-            );
+          {/* Transition: Glitch cut */}
+          <TransitionSeries.Transition
+            presentation={glitch()}
+            timing={linearTiming({ durationInFrames: 8 })}
+          />
 
-            // Optional: Add a subtle hover effect that scales characters
-            tl.to(
-              splitText.chars,
-              {
-                scale: 1.1,
-                duration: 0.3,
-                stagger: 0.02,
-                yoyo: true,
-                repeat: 1,
-                ease: "power2.inOut",
-              },
-              "+=0.5",
-            );
+          {/* Scene 2: Solution - "Make Them Unforgettable" */}
+          <TransitionSeries.Sequence durationInFrames={120}>
+            <SolutionScene headingFont={headingFont} bodyFont={bodyFont} />
+          </TransitionSeries.Sequence>
 
-            return tl;
-          }}
-        >
-          welcome to <span className="text-blue-400 font-light">Motionabl</span>
-        </TextAnimation>
+          {/* Transition: Flash white impact */}
+          <TransitionSeries.Transition
+            presentation={flashWhite()}
+            timing={linearTiming({ durationInFrames: 10 })}
+          />
+
+          {/* Scene 3: Results - Stats */}
+          <TransitionSeries.Sequence durationInFrames={120}>
+            <ResultsScene headingFont={headingFont} bodyFont={bodyFont} />
+          </TransitionSeries.Sequence>
+
+          {/* Transition: Whip pan */}
+          <TransitionSeries.Transition
+            presentation={whipPan()}
+            timing={linearTiming({ durationInFrames: 8 })}
+          />
+
+          {/* Scene 4: CTA - "Start Today" */}
+          <TransitionSeries.Sequence durationInFrames={150}>
+            <CTAScene headingFont={headingFont} bodyFont={bodyFont} />
+          </TransitionSeries.Sequence>
+        </TransitionSeries>
       </AbsoluteFill>
     </>
   );
