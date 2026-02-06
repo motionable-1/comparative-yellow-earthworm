@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  AbsoluteFill,
-  useCurrentFrame,
-  useVideoConfig,
-  interpolate,
-  Easing,
-} from "remotion";
+import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from "remotion";
 import { TextAnimation } from "../../library/components/text/TextAnimation";
 import { Noise } from "../../library/components/effects/Noise";
 
@@ -14,7 +8,6 @@ export const SolutionScene: React.FC<{
   bodyFont: string;
 }> = ({ headingFont, bodyFont }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
 
   // Highlight wipe animation
   const highlightProgress = interpolate(frame, [25, 45], [0, 100], {

@@ -13,7 +13,7 @@ import { Noise } from "../../library/components/effects/Noise";
 export const HookScene: React.FC<{
   headingFont: string;
   bodyFont: string;
-}> = ({ headingFont, bodyFont }) => {
+}> = ({ headingFont }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
